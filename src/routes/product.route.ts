@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAdminProducts,
   getAllCategories,
+  getAllProducts,
   getLatestProducts,
   getSingleProduct,
   newProduct,
@@ -18,6 +19,9 @@ app.post("/new", adminOnly, singleUpload, newProduct);
 
 // TO GET LATEST PRODUCT
 app.get("/latest", getLatestProducts);
+
+// ALL PRODUCTS WITH SEARCH , SORT , FILTER
+app.get("/all", getAllProducts);
 
 // TO GET ALL UNIQUE CATEGORIES
 app.get("/categories", getAllCategories);
