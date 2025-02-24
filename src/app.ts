@@ -1,6 +1,7 @@
 import express from "express";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { connectDB } from "./utils/feature.js";
+import NodeCache from "node-cache";
 
 // IMPORTING ROUTES
 import userRoute from "./routes/user.route.js";
@@ -9,6 +10,8 @@ import productRoute from "./routes/product.route.js";
 const port = 4000;
 
 connectDB();
+
+export const myCache = new NodeCache();
 
 const app = express();
 
