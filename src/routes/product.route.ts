@@ -1,10 +1,13 @@
 import express from "express";
 import { adminOnly } from "../middlewares/auth.middleware.js";
 import {
+  deleteProduct,
   getAdminProducts,
   getAllCategories,
   getLatestProducts,
+  getSingleProduct,
   newProduct,
+  updateProduct,
 } from "../controllers/product.controller.js";
 import { singleUpload } from "../middlewares/multer.middleware.js";
 
@@ -20,6 +23,13 @@ app.get("/latest", getLatestProducts);
 app.get("/categories", getAllCategories);
 
 // TO GET ALL ADMIN PRODUCTS
-app.get("/admin-products", getAdminProducts);
+app.get("/admin-products", adminOnly, getAdminProducts);
+
+// TO GET, UPDATE & DELETE PRODUCT BY ID
+app
+  .route("/:id")
+  .get(getSingleProduct)
+  .put(adminOnly, singleUpload, updateProduct)
+  .delete(adminOnly, deleteProduct);
 
 export default app;
