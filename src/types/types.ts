@@ -14,3 +14,10 @@ export interface NewUserRequestBody {
   _id: string;
   dob: Date;
 }
+
+export interface NewProductRequestBody {
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+}
