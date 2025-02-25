@@ -3,14 +3,18 @@ import { adminOnly } from "../middlewares/auth.middleware.js";
 import {
   allCoupon,
   applyDiscount,
+  createPaymentIntent,
   deleteCoupon,
   newCoupon,
 } from "../controllers/payment.controller.js";
 
 const app = express.Router();
 
+// STRIPE PAYMENT INTENT
+app.post("/create", createPaymentIntent);
+
 // TO APPLY COUPON DISCOUNT
-app.post("/discount", applyDiscount);
+app.get("/discount", applyDiscount);
 
 // TO CREATE NEW COUPON
 app.post("/coupon/new", adminOnly, newCoupon);
