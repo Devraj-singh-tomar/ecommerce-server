@@ -15,7 +15,7 @@ export const connectDB = (uri: string) => {
     .catch((e) => console.log(e));
 };
 
-export const invalidateCache = async ({
+export const invalidateCache = ({
   product,
   admin,
   order,
@@ -49,6 +49,12 @@ export const invalidateCache = async ({
   }
 
   if (admin) {
+    myCache.del([
+      "admin-stats",
+      "admin-pie-charts",
+      "admin-bar-charts",
+      "admin-line-charts",
+    ]);
   }
 };
 
