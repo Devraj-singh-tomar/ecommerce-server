@@ -5,6 +5,7 @@ import NodeCache from "node-cache";
 import { config } from "dotenv";
 import morgan from "morgan";
 import Stripe from "stripe";
+import cors from "cors";
 
 // IMPORTING ROUTES
 import userRoute from "./routes/user.route.js";
@@ -21,6 +22,7 @@ const port = process.env.PORT || 4000;
 
 const mongoURI = process.env.MONGO_URI || "";
 const stripeKey = process.env.STRIPE_KEY || "";
+const clientURL = process.env.CLIENT_URL || "";
 
 connectDB(mongoURI);
 
@@ -32,6 +34,13 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(
+  cors({
+    origin: [clientURL],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // USER ROUTE
 app.use("/api/v1/user", userRoute);
