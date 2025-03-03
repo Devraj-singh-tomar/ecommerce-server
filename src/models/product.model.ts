@@ -7,10 +7,19 @@ const schema = new mongoose.Schema(
       required: [true, "Please enter name"],
     },
 
-    photo: {
-      type: String,
-      required: [true, "Please add photo"],
-    },
+    photos: [
+      {
+        public_id: {
+          type: String,
+          required: [true, "Please enter public ID"],
+        },
+
+        url: {
+          type: String,
+          required: [true, "Please enter url"],
+        },
+      },
+    ],
 
     price: {
       type: Number,

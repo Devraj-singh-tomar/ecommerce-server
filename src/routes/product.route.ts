@@ -10,12 +10,12 @@ import {
   newProduct,
   updateProduct,
 } from "../controllers/product.controller.js";
-import { singleUpload } from "../middlewares/multer.middleware.js";
+import { multiUpload, singleUpload } from "../middlewares/multer.middleware.js";
 
 const app = express.Router();
 
 // TO CREATE NEW PRODUCT
-app.post("/new", adminOnly, singleUpload, newProduct);
+app.post("/new", adminOnly, multiUpload, newProduct);
 
 // TO GET LATEST PRODUCT
 app.get("/latest", getLatestProducts);
