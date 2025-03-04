@@ -25,6 +25,19 @@ export const uploadToCloudinary = async (files: Express.Multer.File[]) => {
   }));
 };
 
+export const deleteFromCloudinary = async (publicIds: string[]) => {
+  const promises = publicIds.map((id) => {
+    return new Promise<void>((resolve, reject) => {
+      cloudinary.uploader.destroy(id, (error, result) => {
+        if (error) return reject(error);
+        resolve();
+      });
+    });
+  });
+
+  await Promise.all(promises);
+};
+
 export const connectDB = (uri: string) => {
   mongoose
     .connect(uri, {
