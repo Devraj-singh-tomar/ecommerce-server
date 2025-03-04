@@ -134,18 +134,20 @@ export const getSingleProduct = TryCatch(async (req, res, next) => {
 export const updateProduct = TryCatch(async (req, res, next) => {
   const { id } = req.params;
   const { category, name, price, stock } = req.body;
-  const photo = req.file;
+  const photos = req.files as Express.Multer.File[] | undefined;
 
   const product = await Product.findById(id);
 
   if (!product) return next(new ErrorHandler("Product not found", 404));
 
-  if (photo) {
-    rm(product.photo, () => {
-      console.log("Old photo deleted");
-    });
+  if (photos && photos.length > 0) {
+    const photosURL = await uploadToCloudinary(photos);
 
-    product.photo = photo.path;
+    const ids = product.photos.map((photo) => photo.public_id);
+
+    await deleteFromCloudinary(ids);
+
+    product.set("photos", photosURL);
   }
 
   if (name) product.name = name;
