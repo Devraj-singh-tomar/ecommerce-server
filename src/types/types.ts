@@ -20,6 +20,7 @@ export interface NewProductRequestBody {
   category: string;
   price: number;
   stock: number;
+  description: string;
 }
 
 export type SearchRequestQuery = {

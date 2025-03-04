@@ -36,6 +36,16 @@ const schema = new mongoose.Schema(
       required: [true, "Please add category"],
       trim: true,
     },
+
+    description: {
+      type: String,
+      required: [true, "Please add description"],
+    },
+
+    ratings: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

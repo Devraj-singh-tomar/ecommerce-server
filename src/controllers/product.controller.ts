@@ -18,7 +18,7 @@ import {
 
 export const newProduct = TryCatch(
   async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
-    const { category, name, price, stock } = req.body;
+    const { category, name, price, stock, description } = req.body;
 
     const photos = req.files as Express.Multer.File[] | undefined;
 
@@ -30,7 +30,7 @@ export const newProduct = TryCatch(
     if (photos.length > 5)
       return next(new ErrorHandler("you can only upload 5 photos", 400));
 
-    if (!name || !category || !stock || !price) {
+    if (!name || !category || !stock || !price || !description) {
       return next(new ErrorHandler("Please enter all fields", 400));
     }
 
@@ -41,6 +41,7 @@ export const newProduct = TryCatch(
     await Product.create({
       name,
       price,
+      description,
       stock,
       category: category.toLowerCase(),
       photos: photosURL,
@@ -133,7 +134,7 @@ export const getSingleProduct = TryCatch(async (req, res, next) => {
 
 export const updateProduct = TryCatch(async (req, res, next) => {
   const { id } = req.params;
-  const { category, name, price, stock } = req.body;
+  const { category, name, price, stock, description } = req.body;
   const photos = req.files as Express.Multer.File[] | undefined;
 
   const product = await Product.findById(id);
@@ -154,6 +155,7 @@ export const updateProduct = TryCatch(async (req, res, next) => {
   if (price) product.price = price;
   if (stock) product.stock = stock;
   if (category) product.category = category;
+  if (description) product.description = description;
 
   await product.save();
 
