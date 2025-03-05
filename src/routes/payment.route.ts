@@ -5,7 +5,9 @@ import {
   applyDiscount,
   createPaymentIntent,
   deleteCoupon,
+  getCoupon,
   newCoupon,
+  updateCoupon,
 } from "../controllers/payment.controller.js";
 
 const app = express.Router();
@@ -22,7 +24,11 @@ app.post("/coupon/new", adminOnly, newCoupon);
 // TO RETRIEVE ALL COUPON
 app.get("/coupon/all", adminOnly, allCoupon);
 
-// TO DELETE COUPON
-app.delete("/coupon/:id", adminOnly, deleteCoupon);
+// TO DELETE, GET, UPDATE COUPON
+app
+  .route("/coupon/:id")
+  .get(adminOnly, getCoupon)
+  .put(adminOnly, updateCoupon)
+  .delete(adminOnly, deleteCoupon);
 
 export default app;
