@@ -3,6 +3,26 @@ import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.model.js";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
+import { Review } from "../models/review.modal.js";
+
+export const findAverageRatings = async (
+  productId: mongoose.Types.ObjectId
+) => {
+  let totalRating = 0;
+
+  const reviews = await Review.find({ product: productId });
+
+  reviews.forEach((review) => {
+    totalRating += review.rating;
+  });
+
+  const averageRating = Math.floor(totalRating / reviews.length) || 0;
+
+  return {
+    numOfReviews: reviews.length,
+    ratings: averageRating,
+  };
+};
 
 const getBase64 = (file: Express.Multer.File) =>
   `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;

@@ -8,6 +8,8 @@ import {
   getLatestProducts,
   getSingleProduct,
   newProduct,
+  newReview,
+  deleteReview,
   updateProduct,
 } from "../controllers/product.controller.js";
 import { multiUpload, singleUpload } from "../middlewares/multer.middleware.js";
@@ -35,5 +37,11 @@ app
   .get(getSingleProduct)
   .put(adminOnly, multiUpload, updateProduct)
   .delete(adminOnly, deleteProduct);
+
+// PRODUCT REVIEW ROUTE's ==============================
+
+app.post("/review/new/:id", newReview);
+
+app.delete("/review/:id", deleteReview);
 
 export default app;

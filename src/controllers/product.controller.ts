@@ -11,9 +11,13 @@ import { rm } from "fs";
 import { myCache } from "../app.js";
 import {
   deleteFromCloudinary,
+  findAverageRatings,
   invalidateCache,
   uploadToCloudinary,
 } from "../utils/feature.js";
+import { User } from "../models/user.model.js";
+import { Review } from "../models/review.modal.js";
+import { Error } from "mongoose";
 // import { faker } from "@faker-js/faker";
 
 export const newProduct = TryCatch(
@@ -238,6 +242,98 @@ export const getAllProducts = TryCatch(
     });
   }
 );
+
+export const newReview = TryCatch(async (req, res, next) => {
+  const user = await User.findById(req.query.id);
+
+  if (!user) return next(new ErrorHandler("Your are not loggedIn", 400));
+
+  const product = await Product.findById(req.params.id);
+
+  if (!product) return next(new ErrorHandler("Product not found", 404));
+
+  const { comment, rating } = req.body;
+
+  const alreadyReviewed = await Review.findOne({
+    user: user._id,
+    product: product._id,
+  });
+
+  if (alreadyReviewed) {
+    alreadyReviewed.comment = comment;
+    alreadyReviewed.rating = rating;
+
+    await alreadyReviewed.save();
+  } else {
+    await Review.create({
+      comment,
+      rating,
+      user: user._id,
+      product: product._id,
+    });
+  }
+
+  const { numOfReviews, ratings } = await findAverageRatings(product._id);
+
+  product.ratings = ratings;
+
+  product.numOfReviews = numOfReviews;
+
+  await product.save();
+
+  invalidateCache({
+    product: true,
+    admin: true,
+    productId: String(product._id),
+  });
+
+  return res.status(alreadyReviewed ? 200 : 201).json({
+    success: true,
+    message: alreadyReviewed
+      ? "Your review updated"
+      : "Review added successfully",
+  });
+});
+
+export const deleteReview = TryCatch(async (req, res, next) => {
+  const user = await User.findById(req.query.id);
+
+  if (!user) return next(new ErrorHandler("Your are not loggedIn", 400));
+
+  const review = await Review.findById(req.params.id);
+
+  if (!review) return next(new ErrorHandler("Review not found", 404));
+
+  const isAuthenticUser = review.user.toString() === user._id.toString();
+
+  if (!isAuthenticUser)
+    return next(new ErrorHandler("You are not authorized", 401));
+
+  await review.deleteOne();
+
+  const product = await Product.findById(review.product);
+
+  if (!product) return next(new ErrorHandler("Product not found", 404));
+
+  const { numOfReviews, ratings } = await findAverageRatings(product._id);
+
+  product.ratings = ratings;
+
+  product.numOfReviews = numOfReviews;
+
+  await product.save();
+
+  invalidateCache({
+    product: true,
+    admin: true,
+    productId: String(product._id),
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Review deleted successfully",
+  });
+});
 
 /*================
 GENERATE FAKE DATA
