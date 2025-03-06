@@ -11,6 +11,7 @@ import {
   newReview,
   deleteReview,
   updateProduct,
+  getAllProductReviews,
 } from "../controllers/product.controller.js";
 import { multiUpload, singleUpload } from "../middlewares/multer.middleware.js";
 
@@ -39,6 +40,7 @@ app
   .delete(adminOnly, deleteProduct);
 
 // PRODUCT REVIEW ROUTE's ==============================
+app.get("/reviews/:id", getAllProductReviews);
 
 app.post("/review/new/:id", newReview);
 

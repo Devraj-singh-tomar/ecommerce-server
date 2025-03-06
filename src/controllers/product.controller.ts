@@ -242,6 +242,18 @@ export const getAllProducts = TryCatch(
     });
   }
 );
+export const getAllProductReviews = TryCatch(async (req, res, next) => {
+  const reviews = await Review.find({
+    product: req.params.id,
+  })
+    .populate("user", "name photo")
+    .sort({ updatedAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    reviews,
+  });
+});
 
 export const newReview = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.query.id);
