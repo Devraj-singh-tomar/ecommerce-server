@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
-import { myCache } from "../app.js";
+import { redis } from "../app.js";
 import { Product } from "../models/product.model.js";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { Review } from "../models/review.modal.js";
@@ -80,14 +80,19 @@ export const connectDB = (uri: string) => {
     .catch((e) => console.log(e));
 };
 
-export const invalidateCache = ({
+export const invalidateCache = async ({
   product,
   admin,
   order,
+  review,
   userId,
   orderId,
   productId,
 }: InvalidateCacheProps) => {
+  if (review) {
+    await redis.del([`reviews-${productId}`]);
+  }
+
   if (product) {
     const productKeys: string[] = [
       "latest-products",
@@ -100,7 +105,7 @@ export const invalidateCache = ({
     if (typeof productId === "object")
       productId.forEach((i) => productKeys.push(`product-${i}`));
 
-    myCache.del(productKeys);
+    await redis.del(productKeys);
   }
 
   if (order) {
@@ -110,11 +115,11 @@ export const invalidateCache = ({
       `orders-${orderId}`,
     ];
 
-    myCache.del(orderKeys);
+    await redis.del(orderKeys);
   }
 
   if (admin) {
-    myCache.del([
+    await redis.del([
       "admin-stats",
       "admin-pie-charts",
       "admin-bar-charts",
