@@ -4,6 +4,7 @@ import { myCache } from "../app.js";
 import { Product } from "../models/product.model.js";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { Review } from "../models/review.modal.js";
+import { Redis } from "ioredis";
 
 export const findAverageRatings = async (
   productId: mongoose.Types.ObjectId
@@ -56,6 +57,16 @@ export const deleteFromCloudinary = async (publicIds: string[]) => {
   });
 
   await Promise.all(promises);
+};
+
+export const connectRedis = (redisURI: string) => {
+  const redis = new Redis(redisURI);
+
+  redis.on("connect", () => console.log("redis connected"));
+
+  redis.on("error", (error) => console.log(error));
+
+  return redis;
 };
 
 export const connectDB = (uri: string) => {

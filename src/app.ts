@@ -1,6 +1,6 @@
 import express from "express";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
-import { connectDB } from "./utils/feature.js";
+import { connectDB, connectRedis } from "./utils/feature.js";
 import NodeCache from "node-cache";
 import { config } from "dotenv";
 import morgan from "morgan";
@@ -22,10 +22,12 @@ config({
 const port = process.env.PORT || 4000;
 
 const mongoURI = process.env.MONGO_URI || "";
+const redisURI = process.env.REDIS_URI || "";
 const stripeKey = process.env.STRIPE_KEY || "";
 const clientURL = process.env.CLIENT_URL || "";
 
 connectDB(mongoURI);
+export const redis = connectRedis(redisURI);
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
